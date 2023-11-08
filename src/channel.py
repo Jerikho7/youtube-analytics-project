@@ -17,4 +17,4 @@ class Channel:
         request_channel_data = self.youtube.channels().list(part='snippet,statistics', id=self.channel_id)
         channel_data: object = request_channel_data.execute()
         
-        print(json.dump(channel_data, indent=2, ensure_ascii=False))
+        print(json.dumps(channel_data, indent=2, ensure_ascii=False))
