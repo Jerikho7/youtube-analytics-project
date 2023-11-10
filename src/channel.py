@@ -11,13 +11,44 @@ class Channel:
     def __init__(self, channel_id: str):
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
+        self.url = f'https://www.youtube.com/channel/{channel_id}'
+
         data_channel = self.get_service().channels().list(part='snippet,statistics', id=self.__channel_id).execute()
-        self.title = data_channel["items"][0]["snippet"]["title"]
-        self.description = data_channel["items"][0]["snippet"]["description"]
-        self.url = data_channel["items"][0]["snippet"]["thumbnails"]["default"]["url"]
-        self.subscriber_count = data_channel["items"][0]["statistics"]["subscriberCount"]
-        self.video_count = data_channel["items"][0]["statistics"]["videoCount"]
-        self.viewing_count = data_channel["items"][0]["statistics"]["viewCount"]
+        item = data_channel["items"][0]
+
+        self.title = item["snippet"]["title"]
+        self.description = item["snippet"]["description"]
+
+        self.subscriber_count = int(item["statistics"]["subscriberCount"])
+        self.video_count = int(item["statistics"]["videoCount"])
+        self.viewing_count = int(item["statistics"]["viewCount"])
+
+    def __str__(self):
+        return f'{self.title} ({self.url})'
+
+    def __add__(self, other):
+        return self.subscriber_count + other.subscriber_count
+
+    def __sub__(self, other):
+        return int(self.subscriber_count) - int(other.subscriber_count)
+
+    def __le__(self, other):
+        return self.subscriber_count <= other.subscriber_count
+
+    def __ge__(self, other):
+        return self.subscriber_count >= other.subscriber_count
+
+    def __lt__(self, other):
+        return self.subscriber_count < other.subscriber_count
+
+    def __gt__(self, other):
+        return self.subscriber_count > other.subscriber_count
+
+    def __eq__(self, other):
+        return self.subscriber_count == other.subscriber_count
+
+    def __ne__(self, other):
+        return self.subscriber_count != other.subscriber_count
 
     @property
     def channel_id(self):
